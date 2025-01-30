@@ -3,7 +3,6 @@ import { registerController, loginController, logoutController, updateProfileCon
 import { isAuthenticated } from "../../middleware/authMiddleware.js";  
 
 const router = express.Router();
-
 router.post("/register", registerController);
 router.post("/login", loginController);
 router.get("/logout", isAuthenticated, logoutController);

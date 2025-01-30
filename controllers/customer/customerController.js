@@ -1,24 +1,27 @@
-import userModel from "../../models/userModel.js";
+import customerModel from "../../models/customerModel.js";
+import fs from "fs";
 
 
 export const registerController = async (req, res) => {
   try {
     
-    const { name, email, password,role } = req.body;
+    const { name, email, password, address, city, country, phone } = req.body;
 
-   
     if (
       !name ||
       !email ||
-      !password
-     
+      !password ||
+      !address ||
+      !city ||
+      !country ||
+      !phone
     ) {
       return res.status(400).json({ message: "Please fill all the fields" });
     }
 
    
-    const existingUser = await userModel.findOne({ email });
-    if (existingUser) {
+    const existingCustomer = await customerModel.findOne({ email });
+    if (existingCustomer) {
       return res.status(400).json({
         success: false,
         message: "Email already exists",
@@ -26,17 +29,20 @@ export const registerController = async (req, res) => {
     }
 
     // Create user
-    const user = await userModel.create({
+    const customer = await customerModel.create({
       name,
       email,
       password,
-       role
+      address,
+      city,
+      country,
+      phone
     });
 
     return res.status(200).json({
       message: "Registration successful",
       success: true,
-      user, 
+      customer, 
     });
   } catch (error) {
     console.log("Error:", error);
@@ -68,9 +74,9 @@ export const loginController = async (req, res) => {
       });
     }
 
-    const user = await userModel.findOne({ email });
+    const customer = await customerModel.findOne({ email });
 
-    if (!user) {
+    if (!customer) {
       return res.status(404).send({
         success: false,
         message: "User not found",
@@ -79,7 +85,7 @@ export const loginController = async (req, res) => {
 
     //check password
 
-    const isMatch = await user.comparePassword(password);
+    const isMatch = await customer.comparePassword(password);
     if (!isMatch) {
       return res.status(500).send({
         success: false,
@@ -89,7 +95,7 @@ export const loginController = async (req, res) => {
 
     //token
 
-    const token = user.generateToken();
+    const token = customer.generateToken();
 
     res
       .status(200)
@@ -103,7 +109,7 @@ export const loginController = async (req, res) => {
         success: true,
         message: "logged in successfully",
         token,
-        user,
+        customer,
       });
   } catch (error) {
     console.log(error);
@@ -115,7 +121,24 @@ export const loginController = async (req, res) => {
   }
 };
 
-
+export const getUserProfileController = async (req, res) => {
+  try {
+    const customer = await customerModel.findById(req.customer._id);
+    customer.password = undefined;
+    res.status(200).send({
+      success: true,
+      message: "customer profile fetched successfully",
+      customer,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      message: "Error in profile api",
+      error,
+    });
+  }
+};
 
 export const logoutController = async (req, res) => {
   try {
@@ -135,7 +158,7 @@ export const logoutController = async (req, res) => {
     console.log(error);
     res.status(500).send({
       success: false,
-      message: "Error in logout api",
+      message: "Error in profile api",
       error,
     });
   }
@@ -143,19 +166,22 @@ export const logoutController = async (req, res) => {
 
 export const updateProfileController = async (req, res) => {
   try {
-    const user = await userModel.findById(req.user._id);
-    const { name, email} = req.body;
+    const customer = await customerModel.findById(req.customer._id);
+    const { name, email, address, city, country, phone } = req.body;
     // validation and update
 
-    if (name) user.name = name;
-    if (email) user.email = email;
-  
+    if (name) customer.name = name;
+    if (email) customer.email = email;
+    if (address) customer.address = address;
+    if (city) customer.city = city;
+    if (country) customer.country = country;
+    if (phone) customer.phone = phone;
 
-    await user.save();
+    await customer.save();
     res.status(200).send({
       success: true,
       message: "profile updated successfully",
-      user,
+      customer,
     });
   } catch (error) {}
 };
@@ -164,7 +190,7 @@ export const updateProfileController = async (req, res) => {
 
 export const updatePasswordController = async (req, res) => {
   try {
-    const user = await userModel.findById(req.user._id);
+    const customer = await customerModel.findById(req.customer._id);
     const { oldPassword, newPassword } = req.body;
 
     //validation
@@ -176,7 +202,7 @@ export const updatePasswordController = async (req, res) => {
     }
 
     // check old password
-    const isMatch = await user.comparePassword(oldPassword);
+    const isMatch = await customer.comparePassword(oldPassword);
     //validation
     if (!isMatch) {
       return res.status(500).send({
@@ -184,17 +210,56 @@ export const updatePasswordController = async (req, res) => {
         message: "Invalid old password",
       });
     }
-    user.password = newPassword;
-    await user.save();
+    customer.password = newPassword;
+    await customer.save();
     res.status(200).send({
       success: true,
       message: "password updated successfully",
     });
-  } catch (error) {
-
-  }
+  } catch (error) {}
 };
 
 
+export const updateProfilePicController = async (req, res) => {
+  try {
+    const customer = await customerModel.findById(req.customer._id);
+
+    if (!req.file) {
+      return res.status(400).send({
+        success: false,
+        message: "No file uploaded",
+      });
+    }
+
+   
+    if (customer.profilePic?.url) {
+      const oldFilePath = `./${customer.profilePic.url}`;
+      if (fs.existsSync(oldFilePath)) {
+        fs.unlinkSync(oldFilePath);
+      }
+    }
+
+    
+    customer.profilePic = {
+      public_id: req.file.filename, 
+      url: req.file.path, 
+    };
+
+    await customer.save();
+
+    res.status(200).send({
+      success: true,
+      message: "Profile picture updated successfully",
+      customer,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      message: "Error in profile picture update API",
+      error,
+    });
+  }
+};
 
 

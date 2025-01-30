@@ -10,6 +10,7 @@ import connectDB from "./config/db.js";
 
 
 import userRoutes from "./routes/admin/userRoutes.js";
+import customerRoutes from "./routes/customer/customerRoutes.js";
 
 //dot env config
 
@@ -31,6 +32,7 @@ app.use(cors());
 app.use(cookieParser());
 
 app.use("/api/admin",userRoutes);
+app.use("/api/customer",customerRoutes);
 app.get('/',(req,res)=>{
     return res.status(200).send("<h1>Welcome to node </h1>" );
 });
