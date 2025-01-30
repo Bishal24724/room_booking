@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 import jwt from 'jsonwebtoken';
 
-const customerSchema = new mongoose.Schema(
+const userSchema = new mongoose.Schema(
   {
     name: {
       type: String,
@@ -20,7 +20,7 @@ const customerSchema = new mongoose.Schema(
     },
    
      role: { type: String, enum: ["admin", "staff"], default: "staff" },
-     
+
   },
   { timestamps: true }
 );
@@ -51,7 +51,7 @@ userSchema.methods.generateToken= function(){
 }
 
 
- const userModel= mongoose.model("Customer",userSchema);
+ const userModel= mongoose.model("User",userSchema);
  export default userModel;
 
 

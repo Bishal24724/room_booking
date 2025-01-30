@@ -8,6 +8,9 @@ import helmet from "helmet";
 
 import connectDB from "./config/db.js";
 
+
+import userRoutes from "./routes/admin/userRoutes.js";
+
 //dot env config
 
 dotenv.config();
@@ -26,6 +29,8 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(cors());
 app.use(cookieParser());
+
+app.use("/api/admin",userRoutes);
 app.get('/',(req,res)=>{
     return res.status(200).send("<h1>Welcome to node </h1>" );
 });
