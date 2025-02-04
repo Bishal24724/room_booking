@@ -6,15 +6,18 @@ const roomSchema = new mongoose.Schema({
   pricePerNight: { type: Number, required: true },
   features: [{ type: mongoose.Schema.Types.ObjectId, ref: "Feature" }],
   facilities: [{ type: mongoose.Schema.Types.ObjectId, ref: "Facility" }],
-  Pic: {
+  Pic: 
+  [{
     public_id:{
       type:String,
     },
     url:{
       type:String,
     }
-  },
+  }
+],
   isAvailable: { type: Boolean, default: true },
+ 
 }, { timestamps: true });
 
 const roomModel = mongoose.model("Room", roomSchema);

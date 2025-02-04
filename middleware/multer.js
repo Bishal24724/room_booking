@@ -25,9 +25,26 @@ const profilePicStorage = multer.diskStorage({
 });
 
 
+//room image 
+// Storage configuration for room images
+const roomImageStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const uploadDir = makeUploadDir("rooms"); 
+    cb(null, uploadDir);
+  },
+  filename: (req, file, cb) => {
+    const uniqueName = `${Date.now()}-${file.originalname}`;
+    cb(null, uniqueName);
+  },
+});
+
+
 
 export const singleUpload = multer({ storage: profilePicStorage }).single("file");
 
+export const roomImageUpload = multer({ 
+  storage: roomImageStorage 
+}).array("files", 10); 
 
 
 

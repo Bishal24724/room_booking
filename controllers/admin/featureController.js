@@ -1,4 +1,4 @@
-import featureModel from "../../models/facilitesModel.js";
+import featureModel from "../../models/featureModel.js";
 import roomModel from "../../models/roomModel.js";
 
 export const createFeature=async(req,res)=>{
@@ -26,6 +26,7 @@ export const getAllFeature=async(req,res)=>{
             success:true,
             features
     });
+    console.log(features)
 
         
     } catch (error) {

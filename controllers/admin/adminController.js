@@ -10,8 +10,7 @@ export const registerController = async (req, res) => {
     if (
       !name ||
       !email ||
-      !password
-     
+      !password 
     ) {
       return res.status(400).json({ message: "Please fill all the fields" });
     }
