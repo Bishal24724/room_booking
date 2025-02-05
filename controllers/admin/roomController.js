@@ -12,7 +12,7 @@ import { fileURLToPath } from "url";
   try {
     const { number, type, pricePerNight, features = [], facilities = [], isAvailable = true } = req.body;
 
-    // Validate required fields
+   
     if (!number || !type || !pricePerNight) {
       return res.status(400).json({ message: "Number, type, and price per night are required" });
     }
@@ -29,7 +29,9 @@ import { fileURLToPath } from "url";
     if (facilities.length > 0) {
       const validFacilities = await Facility.find({ _id: { $in: facilities } });
       if (validFacilities.length !== facilities.length) {
-        return res.status(400).json({ message: "Facility Not Found" });
+        return res.status(400).json({ 
+          success:true,
+          message: "Facility Not Found" });
       }
     }
   // Validate files
@@ -40,7 +42,7 @@ import { fileURLToPath } from "url";
     });
   }
 
-  // Prepare image data
+   
 
   const Pic = req.files.map((file) => ({
     url: `/uploads/rooms/${file.filename}`
@@ -103,7 +105,9 @@ export const getSingleRoom = async (req, res) => {
       .populate('facilities');
 
     if (!room) {
-      return res.status(404).json({ message: "Room not found" });
+      return res.status(404).json({
+        success:false,
+        message: "Room not found" });
     }
 
     res.status(200).json(room);
@@ -125,12 +129,16 @@ export const changeRoomAvailability = async (req, res) => {
       .populate('facilities');
 
     if (!room) {
-      return res.status(404).json({ message: "Room not found" });
+      return res.status(404).json({ 
+        success:false,
+        message: "Room not found" });
     }
 
     res.status(200).json(room);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ 
+      success:false,
+      message: error.message });
   }
 };
 
@@ -157,17 +165,17 @@ export const changeRoomAvailability = async (req, res) => {
     if (facilities) room.facilities = facilities;
     if (isAvailable !== undefined) room.isAvailable = isAvailable;
 
-    // Handle image updates if files are uploaded
+
     if (req.files && req.files.length > 0) {
       const newImages = req.files.map((file) => ({
         url: `/uploads/rooms/${file.filename}`,
       }));
 
-      // Append new images to the existing ones (or replace if needed)
+    
+      
       room.Pic.push(...newImages);
     }
 
-    // Save the updated room to the database
     await room.save();
 
     res.status(200).send({
@@ -179,46 +187,14 @@ export const changeRoomAvailability = async (req, res) => {
     res.status(500).send({
       success: false,
       message: "Error updating room",
-      error: error.message,
+    
     });
   }
 };
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Delete room
-// export const deleteRoom = async (req, res) => {
-//   try {
-//     const room = await Room.findById(req.params.id);
 
-//     if (!room) {
-//       return res.status(404).json({ message: "Room not found" });
-//     }
-//     for (let index = 0; index < room.Pic.length; index++) {
-//       const image = room.Pic[index];
-//       const filePath = path.join(
-//         __dirname,
-//         "../uploads/rooms",
-//         image.url.split("/").pop()
-//       );
-//       try {
-//         fs.unlinkSync(filePath);
-//       } catch (err) {
-//         console.error(`Error deleting file: ${filePath}`, err);
-//       }
-    
-//   }
-//   await room.deleteOne({ _id: req.params.id });
-
-//     res.status(200).json({
-//       success:true,
-//      message: "Room deleted successfully" });
-//   } catch (error) {
-//     res.status(500).json({
-//       success:false,
-//       message: "error in api" });
-//   }
-// };
 
 export const deleteRoom = async (req, res) => {
   try {
@@ -260,4 +236,3 @@ export const deleteRoom = async (req, res) => {
     });
   }
 };
-

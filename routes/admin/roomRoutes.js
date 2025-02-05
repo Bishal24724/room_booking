@@ -4,10 +4,7 @@ import {createRoom,getAllRooms,deleteRoom, updateRoom,changeRoomAvailability} fr
 import { roomImageUpload } from "../../middleware/multer.js";
 
 
-
-
 const router= express.Router();
-
 router.post("/create",isAuthenticated,isAdmin,roomImageUpload,createRoom);
 router.get("/all",isAuthenticated,isAdmin,getAllRooms);
  router.put("/update/:id",isAuthenticated,isAdmin,updateRoom);
