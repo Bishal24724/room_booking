@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 
+ 
 const bookingSchema = new mongoose.Schema(
   {
     customer: {
@@ -49,7 +50,11 @@ const bookingSchema = new mongoose.Schema(
       enum: ["pending", "paid"],
       default: "pending",
     },
+    paymentDate: {
+      type:Date
+    }
   },
+
   { timestamps: true }
 );
 

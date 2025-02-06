@@ -19,12 +19,18 @@ export const createBook = async (req, res) => {
     const customerEmail = req.user.email; 
  
     if (!roomId || !checkInDate || !checkOutDate || !person || !name) {
-      return res.status(400).json({ success: false, message: "All fields are required." });
+      return res.status(400).json({ 
+        success: false, 
+        message: "All fields are required."
+       });
     }
 
 const room = await roomModel.findById(roomId);
 if (!room) {
-  return res.status(404).json({ success: false, message: "Room not found" });
+  return res.status(404).json({ 
+    success: false, 
+    message: "Room not found"
+   });
 }
 
 const existingBooking = await bookingModel.findOne({
@@ -34,7 +40,10 @@ const existingBooking = await bookingModel.findOne({
   });
 
   if (existingBooking) {
-    return res.status(400).json({ success: false, message: "Room is not available for the selected dates." });
+    return res.status(400).json({ 
+      success: false, 
+      message: "Room is not available for the selected dates." 
+    });
   }
 
 
@@ -49,14 +58,18 @@ const existingBooking = await bookingModel.findOne({
 
   
     if (checkIn < today) {
-      return res.status(400).json({ success: false, message: "Check-in date must be today or a future date." });
+      return res.status(400).json({
+         success: false,
+          message: "Check-in date must be today or a future date."
+         });
     }
     if (checkOut <= checkIn) {
-      return res.status(400).json({ success: false, message: "Check-out date must be at least 1 day after check-in." });
+      return res.status(400).json({ 
+        success: false, 
+        message: "Check-out date must be at least 1 day after check-in."
+       });
     }
 
-  
-  
     const nights = Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24)); 
     const totalPrice = nights * room.pricePerNight;
 
@@ -105,6 +118,8 @@ const existingBooking = await bookingModel.findOne({
     });
 
   } catch (error) {
-    res.status(500).json({ success: false, message: "Server Error", error: error.message });
+    res.status(500).json({
+       success: false,
+        message: "Error in api" });
   }
 };

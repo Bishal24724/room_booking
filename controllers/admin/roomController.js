@@ -7,7 +7,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 
 
-// Create new room
+
  export const createRoom = async (req, res) => {
   try {
     const { number, type, pricePerNight, features = [], facilities = [], isAvailable = true } = req.body;
@@ -34,7 +34,7 @@ import { fileURLToPath } from "url";
           message: "Facility Not Found" });
       }
     }
-  // Validate files
+
   if (!req.files || req.files.length === 0) {
     return res.status(400).send({
       success: false,
@@ -157,7 +157,7 @@ export const changeRoomAvailability = async (req, res) => {
 
     const { number, type, pricePerNight, features, facilities, isAvailable } = req.body;
 
-    // Update room details if provided
+
     if (number) room.number = number;
     if (type) room.type = type;
     if (pricePerNight) room.pricePerNight = pricePerNight;
