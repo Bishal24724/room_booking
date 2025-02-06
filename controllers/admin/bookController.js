@@ -45,6 +45,8 @@ export const getSingleBooking = async (req, res) => {
   }
 };
 
+
+
 //cancel booking by admin
 export const cancelBooking = async (req, res) => {
   try {
@@ -191,7 +193,7 @@ export const updatePaymentStatus = async (req, res) => {
       });
     }
 
-    
+
 
     if (booking.paymentStatus == "paid") {
       return res.status(400).json({
@@ -199,6 +201,7 @@ export const updatePaymentStatus = async (req, res) => {
         message: "Payment status is already paid",
       });
     }
+
     booking.paymentStatus = "paid";
     booking.paymentDate= new Date(); 
     await booking.save();

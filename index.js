@@ -16,6 +16,9 @@ import featureRoutes from "./routes/admin/featureRoutes.js";
 import roomRoutes from "./routes/admin/roomRoutes.js";
 import bookRoutes from "./routes/customer/bookRoutes.js"
 import bookRoutesAdmin from "./routes/admin/bookRoutes.js";
+import customerRoutesAdmin from "./routes/admin/customerRoutes.js";
+import guestRoutes from "./routes/guestRoute.js";
+import roomRoutesCustomer from "./routes/customer/roomRoutes.js";
 
 //dot env config
 
@@ -43,6 +46,10 @@ app.use("/api/admin/feature",featureRoutes);
 app.use("/api/admin/room",roomRoutes);
 app.use("/api/customer/room",bookRoutes);
 app.use("/api/admin/room/book",bookRoutesAdmin);
+app.use("/api/admin/customer",customerRoutesAdmin);
+app.use("/api/guest/room",guestRoutes);
+app.use("/api/customer/room",roomRoutesCustomer);
+
 app.get('/',(req,res)=>{
     return res.status(200).send("<h1>Welcome to node </h1>" );
 });
