@@ -123,3 +123,25 @@ const existingBooking = await bookingModel.findOne({
         message: "Error in api" });
   }
 };
+
+//customer booking history 
+export const getMyBookingHistory=async(req,res)=>{
+
+     const mybooking = await bookingModel.findById({customer:req.user._id}).populate("room").sort({checkInDate:-1});
+      try{
+    
+     if(!mybooking.length){
+      return res.status(404).json({success:false,
+        message:"No booking found"});
+     }
+
+     res.status(200).json({
+      success:true,
+      mybooking,
+     })
+    }catch(error){
+      res.status(500).json({
+        success:false,
+        message:"Error in api" });
+    }
+}
